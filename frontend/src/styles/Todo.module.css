@@ -1,0 +1,11 @@
+.todoCard{
+    background-color: bisque;
+}
+
+.cardBody{
+    overflow: hidden;
+}
+
+.todoText{
+    white-space: pre-line;
+}
