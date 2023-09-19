@@ -1,17 +1,14 @@
 import "dotenv/config";
-import express,{NextFunction, Request, Response} from 'express'
-import todoModel from './models/todo';
+import express,{NextFunction, Request, Response} from 'express';
+import todoRoutes from './routes/todos';
+import morgan from 'morgan';
 const app = express();
-app.get("/",async (req, res, next)=>{
-    try{
-        // throw Error("Bazinga")
-        const todos  = await todoModel.find().exec();
-        res.status(200).json(todos);
-    }catch(error){
-        next(error);
-    }
-    
-})
+
+app.use(morgan("dev"));
+
+app.use(express.json());
+
+app.use("/api/todos", todoRoutes);
 
 app.use((req, res, next)=>{
     next(Error("EndPoint not found"));
