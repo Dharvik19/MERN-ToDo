@@ -2,6 +2,7 @@ import "dotenv/config";
 import express,{NextFunction, Request, Response} from 'express';
 import todoRoutes from './routes/todos';
 import morgan from 'morgan';
+import createHttpError, { isHttpError } from "http-errors";
 const app = express();
 
 app.use(morgan("dev"));
@@ -11,15 +12,19 @@ app.use(express.json());
 app.use("/api/todos", todoRoutes);
 
 app.use((req, res, next)=>{
-    next(Error("EndPoint not found"));
+    next(createHttpError(404, "EndPoint not found"));
 })
 
-app.use((error : unknown, req : Request, res : Response, next : NextFunction)=>{
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
     console.error(error);
-    let errorMessage = "an unknown error occured";
-    if(error instanceof Error) errorMessage = error.message;
-    res.status(500).json({error : errorMessage})
-    console.log(next);
-})
+    let errorMessage = "An unknown error occurred";
+    let statusCode = 500;
+    if (isHttpError(error)) {
+        statusCode = error.status;
+        errorMessage = error.message;
+    }
+    res.status(statusCode).json({ error: errorMessage });
+});
 
 export default app;
