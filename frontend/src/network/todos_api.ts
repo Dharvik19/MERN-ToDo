@@ -36,3 +36,19 @@ export async function createTodo(todo : TodoInput): Promise<Todo>{
 
     return response.json();
 }
+
+export async function updateNote(todoId : string, todo : TodoInput): Promise<Todo>{
+    const response = await fetchData("/api/todos/" + todoId, 
+    {
+            method : "PATCH",
+            headers :  {
+                    "Content-Type" : "application/json",
+            },
+            body : JSON.stringify(todo)
+    });
+    return response.json();
+}
+
+export async function deleteTodo(todoId:string) {
+    await fetchData("/api/todos/" + todoId , {method : "DELETE"});
+}

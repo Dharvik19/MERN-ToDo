@@ -1,12 +1,16 @@
 import { Card } from "react-bootstrap";
 import { Todo as TodoModel } from "../models/todo";
 import styles from "../styles/Todo.module.css";
+import styleUtils from '../styles/utils.module.css'
 import { formatDate } from "../utils/formatDate";
+import {MdDelete} from 'react-icons/md';
 interface TodoProps {
     todo : TodoModel,
+    onToDoClicked : (todo : TodoModel)=> void,
+    onDeleteTodoClicked : (todo : TodoModel)=>void,
     className? : string
 }
-const Todo = ({todo, className}: TodoProps) => {
+const Todo = ({todo, onToDoClicked ,onDeleteTodoClicked,className}: TodoProps) => {
     const { 
         title,
         text,
@@ -24,10 +28,20 @@ const Todo = ({todo, className}: TodoProps) => {
     }
 
     return ( 
-        <Card className={`${styles.todoCard} ${className}`}>
+        <Card 
+        className={`${styles.todoCard} ${className}`}
+        onClick={()=> onToDoClicked(todo)}
+        >
             <Card.Body className={styles.cardBody}>
-                <Card.Title>
+                <Card.Title className={styleUtils.flexCenter}>
                     {title}
+                    <MdDelete 
+                        className="text-muted ms-auto"
+                        onClick={(e)=>{
+                            onDeleteTodoClicked(todo);
+                            e.stopPropagation();
+                        }}
+                    />
                 </Card.Title>
                 <Card.Text className={styles.todoText}>
                     {text}

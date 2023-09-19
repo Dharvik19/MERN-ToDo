@@ -3,18 +3,29 @@ import { useForm } from "react-hook-form";
 import { Todo } from '../models/todo';
 import { TodoInput } from '../network/todos_api';
 import * as TodoApi from '../network/todos_api';
-interface AddNoteDialogprops {
+interface AddEditTodoDialogprops {
+    todoToEdit? : Todo,
     onDismiss : ()=>void,
     onTodoSave : (todo: Todo)=> void
 }
-const AddTodoDialog = ({onDismiss,onTodoSave} : AddNoteDialogprops) => {
+const AddEditTodoDialog = ({todoToEdit, onDismiss,onTodoSave} : AddEditTodoDialogprops) => {
 
-    const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm<TodoInput>()
+    const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm<TodoInput>({
+        defaultValues : {
+            title : todoToEdit?.title || "",
+            text : todoToEdit?.text || "",
+        }
+    })
 
     async function onSubmit(input : TodoInput){
         try{
-            const noteResponse = await TodoApi.createTodo(input);
-            onTodoSave(noteResponse);
+            let todoResponse : Todo;
+            if(todoToEdit){
+                todoResponse = await TodoApi.updateNote(todoToEdit._id, input);
+            }else{
+                todoResponse = await TodoApi.createTodo(input);
+            }
+            onTodoSave(todoResponse);
         }catch(error){
             console.error(error);
             alert(error)
@@ -24,12 +35,12 @@ const AddTodoDialog = ({onDismiss,onTodoSave} : AddNoteDialogprops) => {
         <Modal show onHide={onDismiss}>
             <Modal.Header closeButton>
                 <Modal.Title>
-                    Add Tddo
+                    {todoToEdit ? "Edit Todo" : "Add Todo"}
                 </Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-                <Form id="addTodoForm" onSubmit={handleSubmit(onSubmit)}>
+                <Form id="addEditTodoForm" onSubmit={handleSubmit(onSubmit)}>
                     <Form.Group className="mb-3">
                             <Form.Label>Title</Form.Label>
                             <Form.Control
@@ -56,7 +67,7 @@ const AddTodoDialog = ({onDismiss,onTodoSave} : AddNoteDialogprops) => {
             <Modal.Footer>
                 <Button
                     type='submit'
-                    form='addTodoForm'
+                    form='addEditTodoForm'
                     disabled={isSubmitting}
                 >Save</Button>
             </Modal.Footer>
@@ -64,4 +75,4 @@ const AddTodoDialog = ({onDismiss,onTodoSave} : AddNoteDialogprops) => {
      );
 }
  
-export default AddTodoDialog;
+export default AddEditTodoDialog;
