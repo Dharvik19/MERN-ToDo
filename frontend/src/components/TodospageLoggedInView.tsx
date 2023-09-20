@@ -50,13 +50,14 @@ const TodospageLoggedInView = () => {
     const todosGrid = 
   <Row xs={1} md={2} xl={3} className={`${styles.todosGrid} g-4`}>
   {todos.map((todo) => (
-    <Col>
+    <Col key={todo._id}>
       <Todo 
+      
       todo={todo} 
       className={styles.todo} 
       onToDoClicked={setTodoToEdit}
       onDeleteTodoClicked={deleteTodo}
-      key={todo._id} />
+       />
     </Col>
   ))}
 </Row>

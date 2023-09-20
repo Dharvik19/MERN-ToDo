@@ -13,7 +13,7 @@ const TodosPage = ({loggedInUser} : TodosPageProps) => {
     return ( 
         <Container className={styles.todosPage}>
       
-      <h1>TO-Dos</h1>
+      <h2>TO-Dos</h2>
       
         <>
         {loggedInUser ?   
