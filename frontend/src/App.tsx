@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
-import { Container } from "react-bootstrap";
-import NavBar from "./components/NavBar";
-import { User } from "./models/user";
-import styles from "./styles/TodoPage.module.css";
+import { useEffect, useState } from "react";
 import LoginModal from "./components/LoginModal";
+import NavBar from "./components/NavBar";
 import SignUpModal from "./components/SignUpModal";
+import { User } from "./models/user";
 import * as TodosApi from './network/todos_api';
-import TodospageLoggedInView from "./components/TodospageLoggedInView";
-import TodosPageLoggedOutView from "./components/TodosPageLoggedOutView";
+import { BrowserRouter,Routes,Route } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import TodosPage from "./pages/TodosPage";
+import NotFound from "./pages/NotFound";
+import styles from './styles/App.module.css';
 function App() {
   
 
@@ -30,6 +31,7 @@ function App() {
 
   
   return (
+    <BrowserRouter>
     <div>
 
     <NavBar
@@ -38,15 +40,19 @@ function App() {
         onSignUpClicked={()=>setShowsignUpModel(true)}
         onLogOutSuccessful={()=>setLoggedInUser(null)}
 			/>
-    <Container className={styles.todosPage}>
-      
-      <h1>TO-Dos</h1>
-      <>
-        {loggedInUser ?   
-          <TodospageLoggedInView/> : 
-          <TodosPageLoggedOutView/>
-        }
-      </>
+    <Container className={styles.pageContainer}>
+        <Routes>
+            <Route
+              path="/"
+              element={<TodosPage loggedInUser={loggedInUser}/>}
+            />
+            <Route
+              path="/*"
+              element={<NotFound/>}
+            />
+            
+        </Routes>
+
     </Container>
       {
           showsignUpModel && 
@@ -68,6 +74,7 @@ function App() {
           />
         }
     </div>
+    </BrowserRouter>
   );
 }
 
